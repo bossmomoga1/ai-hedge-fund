@@ -1,0 +1,98 @@
+# MCP (Model Context Protocol) Client Configuration
+# Configuration for financial data source clients
+
+# Financial Datasets API Configuration
+financial_datasets:
+  base_url: "https://api.financialdatasets.ai"
+  timeout: 30
+  retry_attempts: 3
+  retry_delay: 1
+  endpoints:
+    financial_metrics: "/financial-metrics/"
+    income_statements: "/financials/income-statements/"
+    balance_sheets: "/financials/balance-sheets/"
+    cash_flow_statements: "/financials/cash-flow-statements/"
+    prices: "/prices/"
+    insider_trades: "/insider-trades/"
+    company_facts: "/companies/"
+
+# StockScreen API Configuration
+stockscreen:
+  base_url: "https://api.stockscreen.io/v1"
+  timeout: 30
+  retry_attempts: 3
+  endpoints:
+    screen: "/screen"
+    stock_details: "/stocks/{ticker}"
+    sector_leaders: "/sectors/{sector}/leaders"
+
+# StockFlow API Configuration
+stockflow:
+  base_url: "https://api.stockflow.io/v1"
+  timeout: 30
+  retry_attempts: 3
+  endpoints:
+    volume_analysis: "/volume/{ticker}"
+    order_flow: "/orderflow/{ticker}"
+    money_flow_index: "/indicators/mfi/{ticker}"
+    volume_profile: "/volume-profile/{ticker}"
+    dark_pool: "/darkpool/{ticker}"
+    institutional_flow: "/institutional-flow/{ticker}"
+
+# TradingView API Configuration
+tradingview:
+  base_url: "https://api.tradingview.com/v1"
+  timeout: 30
+  retry_attempts: 3
+  endpoints:
+    technical_analysis: "/technical-analysis/{ticker}"
+    indicators:
+      rsi: "/indicators/rsi/{ticker}"
+      macd: "/indicators/macd/{ticker}"
+      moving_averages: "/indicators/ma/{ticker}"
+      bollinger_bands: "/indicators/bb/{ticker}"
+      stochastic: "/indicators/stoch/{ticker}"
+    support_resistance: "/support-resistance/{ticker}"
+    pivot_points: "/pivot-points/{ticker}"
+    chart_patterns: "/patterns/{ticker}"
+
+# Crypto Data API Configuration
+crypto:
+  base_url: "https://api.crypto-data.io/v1"
+  timeout: 30
+  retry_attempts: 3
+  endpoints:
+    price: "/price/{symbol}"
+    ohlcv: "/ohlcv/{symbol}"
+    market: "/market/{symbol}"
+    top_cryptos: "/top"
+    exchanges: "/exchanges/{symbol}"
+    onchain: "/onchain/{symbol}"
+    defi: "/defi/{protocol}"
+    fear_greed: "/fear-greed"
+    news: "/news/{symbol}"
+
+# Rate Limiting Configuration
+rate_limiting:
+  enabled: true
+  requests_per_minute: 60
+  requests_per_hour: 1000
+  burst_size: 10
+
+# Caching Configuration
+caching:
+  enabled: true
+  ttl_seconds:
+    price_data: 60  # 1 minute
+    market_data: 300  # 5 minutes
+    financial_statements: 86400  # 24 hours
+    company_facts: 604800  # 7 days
+  cache_backend: "memory"  # Options: memory, redis, file
+
+# Error Handling
+error_handling:
+  max_retries: 3
+  retry_delay: 1
+  exponential_backoff: true
+  log_errors: true
+  raise_on_error: false

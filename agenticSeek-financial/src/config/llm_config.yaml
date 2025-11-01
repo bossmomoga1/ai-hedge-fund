@@ -1,0 +1,200 @@
+# LLM Configuration
+# Configuration for Large Language Model providers and routing
+
+# Default LLM Settings
+defaults:
+  temperature: 0.1
+  max_tokens: 4096
+  top_p: 1.0
+  frequency_penalty: 0.0
+  presence_penalty: 0.0
+
+# LLM Provider Configurations
+providers:
+  openai:
+    enabled: true
+    api_key_env: "OPENAI_API_KEY"
+    models:
+      - name: "gpt-4o"
+        context_window: 128000
+        cost_per_1m_input: 2.50
+        cost_per_1m_output: 10.00
+        capabilities: ["reasoning", "analysis", "coding"]
+        recommended_for: ["complex_analysis", "critical_decisions"]
+      
+      - name: "gpt-4o-mini"
+        context_window: 128000
+        cost_per_1m_input: 0.15
+        cost_per_1m_output: 0.60
+        capabilities: ["reasoning", "analysis"]
+        recommended_for: ["moderate_analysis", "quick_queries"]
+      
+      - name: "gpt-3.5-turbo"
+        context_window: 16385
+        cost_per_1m_input: 0.50
+        cost_per_1m_output: 1.50
+        capabilities: ["basic_analysis"]
+        recommended_for: ["simple_queries"]
+
+  anthropic:
+    enabled: true
+    api_key_env: "ANTHROPIC_API_KEY"
+    models:
+      - name: "claude-3-5-sonnet-20241022"
+        context_window: 200000
+        cost_per_1m_input: 3.00
+        cost_per_1m_output: 15.00
+        capabilities: ["reasoning", "analysis", "coding", "long_context"]
+        recommended_for: ["complex_analysis", "deep_research"]
+      
+      - name: "claude-3-5-haiku-20241022"
+        context_window: 200000
+        cost_per_1m_input: 0.80
+        cost_per_1m_output: 4.00
+        capabilities: ["reasoning", "analysis"]
+        recommended_for: ["moderate_analysis", "quick_analysis"]
+      
+      - name: "claude-3-opus-20240229"
+        context_window: 200000
+        cost_per_1m_input: 15.00
+        cost_per_1m_output: 75.00
+        capabilities: ["advanced_reasoning", "critical_analysis"]
+        recommended_for: ["critical_decisions", "high_stakes"]
+
+  groq:
+    enabled: true
+    api_key_env: "GROQ_API_KEY"
+    models:
+      - name: "llama-3.3-70b-versatile"
+        context_window: 32768
+        cost_per_1m_input: 0.59
+        cost_per_1m_output: 0.79
+        capabilities: ["reasoning", "analysis"]
+        recommended_for: ["moderate_analysis", "cost_optimization"]
+      
+      - name: "llama-3.1-8b-instant"
+        context_window: 8192
+        cost_per_1m_input: 0.05
+        cost_per_1m_output: 0.08
+        capabilities: ["basic_analysis"]
+        recommended_for: ["simple_queries", "high_volume"]
+
+  google:
+    enabled: true
+    api_key_env: "GOOGLE_API_KEY"
+    models:
+      - name: "gemini-2.0-flash-exp"
+        context_window: 1000000
+        cost_per_1m_input: 0.00
+        cost_per_1m_output: 0.00
+        capabilities: ["reasoning", "analysis", "multimodal"]
+        recommended_for: ["free_tier", "experimentation"]
+      
+      - name: "gemini-1.5-pro"
+        context_window: 2000000
+        cost_per_1m_input: 1.25
+        cost_per_1m_output: 5.00
+        capabilities: ["reasoning", "analysis", "long_context"]
+        recommended_for: ["complex_analysis", "large_documents"]
+
+# Task Complexity Routing
+routing:
+  simple:
+    description: "Quick lookups, simple queries, basic data retrieval"
+    preferred_models:
+      - provider: "groq"
+        model: "llama-3.1-8b-instant"
+      - provider: "google"
+        model: "gemini-2.0-flash-exp"
+      - provider: "openai"
+        model: "gpt-4o-mini"
+    max_cost_per_1m: 1.0
+
+  moderate:
+    description: "Standard analysis, comparisons, screening"
+    preferred_models:
+      - provider: "openai"
+        model: "gpt-4o-mini"
+      - provider: "google"
+        model: "gemini-2.0-flash-exp"
+      - provider: "anthropic"
+        model: "claude-3-5-haiku-20241022"
+      - provider: "groq"
+        model: "llama-3.3-70b-versatile"
+    max_cost_per_1m: 5.0
+
+  complex:
+    description: "Deep analysis, multi-factor evaluation, detailed reports"
+    preferred_models:
+      - provider: "openai"
+        model: "gpt-4o"
+      - provider: "anthropic"
+        model: "claude-3-5-sonnet-20241022"
+      - provider: "google"
+        model: "gemini-1.5-pro"
+    max_cost_per_1m: 15.0
+
+  critical:
+    description: "High-stakes decisions, critical analysis, investment recommendations"
+    preferred_models:
+      - provider: "anthropic"
+        model: "claude-3-opus-20240229"
+      - provider: "openai"
+        model: "gpt-4o"
+      - provider: "anthropic"
+        model: "claude-3-5-sonnet-20241022"
+    max_cost_per_1m: null  # No cost limit
+
+# Agent-Specific Configurations
+agents:
+  stock_analyst:
+    default_complexity: "complex"
+    preferred_provider: "openai"
+    preferred_model: "gpt-4o"
+    temperature: 0.1
+    max_tokens: 4096
+
+  crypto_analyst:
+    default_complexity: "complex"
+    preferred_provider: "anthropic"
+    preferred_model: "claude-3-5-sonnet-20241022"
+    temperature: 0.1
+    max_tokens: 4096
+
+  technical_agent:
+    default_complexity: "moderate"
+    preferred_provider: "openai"
+    preferred_model: "gpt-4o-mini"
+    temperature: 0.1
+    max_tokens: 3000
+
+  fundamental_agent:
+    default_complexity: "complex"
+    preferred_provider: "openai"
+    preferred_model: "gpt-4o"
+    temperature: 0.1
+    max_tokens: 4096
+
+# Cost Optimization
+cost_optimization:
+  enabled: true
+  daily_budget: 10.0  # USD
+  alert_threshold: 0.8  # Alert at 80% of budget
+  fallback_to_cheaper: true
+  track_usage: true
+
+# Performance Settings
+performance:
+  timeout_seconds: 60
+  retry_attempts: 3
+  retry_delay: 1
+  concurrent_requests: 4
+  streaming: false
+
+# Logging
+logging:
+  level: "INFO"
+  log_requests: true
+  log_responses: false
+  log_costs: true
+  log_file: "logs/llm_usage.log"
